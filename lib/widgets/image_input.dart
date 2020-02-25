@@ -22,20 +22,23 @@ class _ImageInputState extends State<ImageInput> {
       maxHeight: 600,
     );
 
+    if (imageFile == null) {
+      final LostDataResponse response = await ImagePicker.retrieveLostData();
+
+      if (response == null) {
+        return;
+      }
+      
+      imageFile = response.file;
+    }
+
     print(imageFile.path);
-
-    // final LostDataResponse response = await ImagePicker.retrieveLostData();
-
-    // if (response != null) imageFile = response.file;
-
-    // print(imageFile.path);
 
     setState(() {
       _storedImage = imageFile;
     });
     final appDir = await syspaths.getApplicationDocumentsDirectory();
     final fileName = path.basename(imageFile.path);
-
     final savedImage = await imageFile.copy('${appDir.path}/$fileName');
     widget.onSelectImage(savedImage);
   }
